@@ -52,6 +52,7 @@ Compile the kernel
 ```
 make -j5 LOCALVERSION=""
 ```
+The LOCALVERSION parameter is only to avoid "+" sign in the name of the kernel.
 After the successful compilation, install the modules, kernel and reboot the system
 ```
 sudo make modules_install
@@ -93,16 +94,15 @@ Multimedia support
     Media USB Adapters
         ## Disable all driver you don't need ##
 ```
-Apply the folling patch
+Apply the following patch
 ```
 patch -p1 < ../odroidC2-kernel/warning.patch
 ```
 Make the following change to avoid error and compile kernel
 ```
 sed -i 's/#define NEED_PM_RUNTIME_GET 1/\/\/#define NEED_PM_RUNTIME_GET 1/g' v4l/config-compat.h
-make -j5 LOCALVERSION=""
+make -j5
 ```
-The LOCALVERSION parameter is only to avoid "+" sign in the name of kernel.
 Possibly, you need to run previous step (both sed and make) multiple times before it succeeds.
 
 After the compilation, install the modules and reboot the system
