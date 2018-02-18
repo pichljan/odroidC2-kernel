@@ -1,0 +1,33 @@
+diff --git a/v4l/compat.h b/v4l/compat.h
+index 7d50ceb..f8500bd 100644
+--- a/v4l/compat.h
++++ b/v4l/compat.h
+@@ -1630,7 +1630,7 @@ static inline __s32 sign_extend32(__u32 value, int index)
+ #endif
+ 
+ #ifdef NEED_WRITEL_RELAXED
+-#define writel_relaxed writel
++// #define writel_relaxed writel
+ #endif
+ 
+ #ifdef NEED_GET_USER_PAGES_UNLOCKED
+diff --git a/v4l/versions.txt b/v4l/versions.txt
+index bdd055e..18f7855 100644
+--- a/v4l/versions.txt
++++ b/v4l/versions.txt
+@@ -2,6 +2,7 @@
+ [9.255.255]
+ INTEL_ATOMISP
+ VIDEO_DW9714
++VIDEO_S5C73M3
+ 
+ [4.13.0]
+ # Needs multiplexer support
+@@ -138,7 +139,6 @@ IR_PWM_TX
+ [3.6.0]
+ # needs include/linux/sizes.h
+ VIDEO_M5MOLS
+-VIDEO_S5C73M3
+ # needs dma_mmap_coherent and sg_alloc_table_from_pages.
+ VIDEOBUF2_DMA_CONTIG
+ 

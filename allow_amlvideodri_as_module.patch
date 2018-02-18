@@ -1,0 +1,113 @@
+diff --git a/drivers/amlogic/amports/video.c b/drivers/amlogic/amports/video.c
+index 821174f..4cf44ab 100644
+--- a/drivers/amlogic/amports/video.c
++++ b/drivers/amlogic/amports/video.c
+@@ -125,6 +125,7 @@ static int omx_pts_interval_lower = -5500;
+ 
+ 
+ bool omx_secret_mode = false;
++EXPORT_SYMBOL(omx_secret_mode);
+ #define DEBUG_FLAG_FFPLAY	(1<<0)
+ #define DEBUG_FLAG_CALC_PTS_INC	(1<<1)
+ 
+diff --git a/drivers/amlogic/ppmgr/ppmgr_drv.c b/drivers/amlogic/ppmgr/ppmgr_drv.c
+index 984469b..a11efb9 100644
+--- a/drivers/amlogic/ppmgr/ppmgr_drv.c
++++ b/drivers/amlogic/ppmgr/ppmgr_drv.c
+@@ -1181,6 +1181,7 @@ void get_ppmgr_buf_info(char **start, unsigned int *size)
+ 	*start = ppmgr_device.buffer_start;
+ 	*size = ppmgr_device.buffer_size;
+ }
++EXPORT_SYMBOL(get_ppmgr_buf_info);
+ 
+ static int ppmgr_open(struct inode *inode, struct file *file)
+ {
+diff --git a/drivers/amlogic/video_dev/Kconfig b/drivers/amlogic/video_dev/Kconfig
+index bdae148..94a2a2f 100644
+--- a/drivers/amlogic/video_dev/Kconfig
++++ b/drivers/amlogic/video_dev/Kconfig
+@@ -4,6 +4,7 @@ config V4L_AMLOGIC_VIDEO
+ 	tristate "Amlogic v4l video device support"
+ 	select VIDEO_DEV
+ 	select VIDEO_V4L2
++	select VIDEOBUF_GEN
+ 	select VIDEOBUF_RESOURCE
+ 	default n
+ 	---help---
+@@ -14,6 +15,7 @@ config V4L_AMLOGIC_VIDEO2
+ 	select VIDEO_DEV
+ 	select VIDEOBUF_GEN
+ 	select VIDEO_V4L2_COMMON
++	select VIDEOBUF_GEN
+ 	select VIDEOBUF_RESOURCE
+ 	select AM_GE2D
+     	default n
+diff --git a/drivers/amlogic/video_dev/amlvideo.c b/drivers/amlogic/video_dev/amlvideo.c
+index 597370f..24ef1fb 100644
+--- a/drivers/amlogic/video_dev/amlvideo.c
++++ b/drivers/amlogic/video_dev/amlvideo.c
+@@ -1017,7 +1017,7 @@ static const struct v4l2_file_operations amlvideo_fops = {
+ 	.owner = THIS_MODULE, .open = amlvideo_open,
+ 	.release = amlvideo_close,
+ 	.read = amlvideo_read, .poll = amlvideo_poll,
+-	.ioctl = video_ioctl2, /* V4L2 ioctl handler */
++	.unlocked_ioctl = video_ioctl2, /* V4L2 ioctl handler */
+ 	.mmap = amlvideo_mmap, };
+ 
+ static const struct v4l2_ioctl_ops amlvideo_ioctl_ops = {
+@@ -1103,7 +1103,7 @@ static int __init amlvideo_create_instance(int inst)
+ 
+ 	*vfd = amlvideo_template;
+ 
+-	vfd->debug = debug;
++	// vfd->debug = debug;
+ 	vfd->v4l2_dev = &dev->v4l2_dev;
+ 
+ 	/* //////////////////////////////////////// */
+diff --git a/drivers/amlogic/video_dev/amlvideo2.c b/drivers/amlogic/video_dev/amlvideo2.c
+index 89a8134..a21c32f 100644
+--- a/drivers/amlogic/video_dev/amlvideo2.c
++++ b/drivers/amlogic/video_dev/amlvideo2.c
+@@ -3642,7 +3642,7 @@ static const struct v4l2_file_operations amlvideo2_fops = {
+ .release = amlvideo2_close,
+ .read = amlvideo2_read,
+ .poll = amlvideo2_poll,
+-.ioctl = video_ioctl2, /* V4L2 ioctl handler */
++.unlocked_ioctl = video_ioctl2, /* V4L2 ioctl handler */
+ .mmap = amlvideo2_mmap, };
+ 
+ static const struct v4l2_ioctl_ops amlvideo2_ioctl_ops = {
+@@ -3860,7 +3860,7 @@ static int amlvideo2_create_node(struct platform_device *pdev)
+ 			break;
+ 		}
+ 		*vfd = amlvideo2_template;
+-		vfd->debug = debug;
++		//vfd->debug = debug;
+ 		ret = video_register_device(vfd, VFL_TYPE_GRABBER, video_nr);
+ 		if (ret < 0) {
+ 			ret = -ENODEV;
+diff --git a/kernel/time.c b/kernel/time.c
+index 3eb322e..c8cc0a4 100644
+--- a/kernel/time.c
++++ b/kernel/time.c
+@@ -704,6 +704,7 @@ unsigned long nsecs_to_jiffies(u64 n)
+ {
+ 	return (unsigned long)nsecs_to_jiffies64(n);
+ }
++EXPORT_SYMBOL_GPL(nsecs_to_jiffies);
+ 
+ /*
+  * Add two timespec values and do a safety check for overflow.
+diff --git a/lib/Kconfig b/lib/Kconfig
+index 991c98b..aded9dc 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -14,7 +14,7 @@ config BITREVERSE
+ 	tristate
+ 
+ config RATIONAL
+-	boolean
++	def_bool y
+ 
+ config GENERIC_STRNCPY_FROM_USER
+ 	bool
